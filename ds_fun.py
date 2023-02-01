@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 #from env import get_connection
 from scipy import stats
+import os
 
 
 from sklearn.model_selection import train_test_split
