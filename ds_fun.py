@@ -11,6 +11,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import RobustScaler, MinMaxScaler, StandardScaler
 from sklearn.metrics import mean_squared_error
+from sklearn.cluster import KMeans
+
 
 #Removes warnings and imporves asthenics
 import warnings
@@ -44,7 +46,7 @@ Modeling:
 -encode_and_dummies(df, target_column = None ,random_seed=1969)
 -train_val_test(train, val, test, target_col)
 -find_regression_baseline(y_train)
--scale_cont_columns(train, val, test, scaler_model = 1, cont_columns)
+-scale_cont_columns(train, val, test, , cont_columns, scaler_model = 1)
 
 ############## -- ACQUIRE FUNCTIONS -- ##############"""
 
@@ -490,9 +492,9 @@ def elbow_method(df, cluster_list):
 
     for n in range(1,10):
         kmeans = KMeans(n_clusters=n)
-        kmeans.fit(train_scaled[cluster_list])
+        kmeans.fit(df[cluster_list])
 
-        train_scaled['cluster_preds'] = kmeans.predict(train_scaled[cluster_list])
+        df['cluster_preds'] = kmeans.predict(df[cluster_list])
 
         inertia0.append({'n_clusters': n,
                         'inertia': kmeans.inertia_})
