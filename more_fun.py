@@ -1,15 +1,13 @@
 '''
 This module ported from zillow regression project.  Some functions won't apply directly but can be modified.
 Contains functions for plotting various charts for quick analysis and functions for performing stats tests.
-Would need to import more modules for this to run  but add to .gitignore so it doesn't crowd the
-project repo.
 '''
 
 import seaborn as sns
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-#import wrangle as w
+import wrangle as w
 from scipy.stats import pearsonr
 from scipy.stats import spearmanr
 from scipy import stats
@@ -22,6 +20,27 @@ from sklearn.linear_model import TweedieRegressor
 
 import prepare_regression as pr
 
+
+
+
+
+#replaces space with _ in column names
+def rename_col(df):
+    sdf = df.rename(columns= {
+                    'fixed acidity':'fixed_acidity',
+                    'volatile acidity':'volatile_acidity',
+                    'citric acid':'citric_acid',
+                    'residual sugar':'residual_sugar',
+                    'free sulfur dioxide':'free_sulfur_dioxide',
+                    'total sulfur dioxide':'total_sulfur_dioxide',
+                    })
+    return df
+
+
+
+
+
+###################################
 #Bar Chart
 def bar_chart(df, x_col, y_col, title):
     sns.barplot(data=df, x=x_col, y=y_col)
@@ -62,8 +81,8 @@ def line_plot(df, x, y, title):
 
 
 #Bar Chart with color
-def bar_chart_with_color(df, x, y, color, title):
-    sns.barplot(data = df , x=x, y=y, color= color)
+def bar_chart_with_color(df, x, y, str_color, title):
+    sns.barplot(data = df , x=x, y=y, color= str_color)
     plt.title(title)
     plt.show()
 
@@ -92,7 +111,7 @@ def pearson_r(x, y):
     Calculates the Pearson correlation coefficient (r) between two lists of data using scipy.stats.pearsonr.
     """
     r, p = pearsonr(x, y)
-    return r
+    return r, p
 
 
 
@@ -104,7 +123,7 @@ def spearman_rho(x, y):
     Calculates the Spearman rank correlation coefficient (rho) between two lists of data using scipy.stats.spearmanr.
     """
     rho, p = spearmanr(x, y)
-    return rho
+    return rho, p
 
 
 
@@ -236,7 +255,7 @@ def explained_variance(y_true, y_pred):
 
 #train, validate, test = w.wrangle_zillow()
 
-
+'''
 def county_scatter():
     county_scatter = sns.scatterplot(data=train, x=train.year_built, y=train.tax_value, hue= train.county, size= 1)
     return county_scatter
@@ -291,6 +310,7 @@ def X_train_y_train_split(df):
     return X_train, y_train
 
 
+
 #different function for getting dummies that takes in 3 arguments
 
 def county_dummies_all(train_1, validate_1, test_1):
@@ -315,6 +335,7 @@ def county_dummies_all(train_1, validate_1, test_1):
 #getting county dummies and dropping columns
 train_model, validate_model, test_model = model_prep(train, validate, test)
 
+
 #separating target variable
 X_train, y_train = X_train_y_train_split(train_model)
 X_validate, y_validate = X_train_y_train_split(validate_model)
@@ -325,11 +346,6 @@ X_train, X_validate, X_test = pr.scale_dataframes(X_train, X_validate, X_test)
 
 
 
-y_train['value_pred_mean'] = 527866.30
-y_validate['value_pred_mean'] = 527866.30
-
-y_train['value_pred_median'] = 376866.00
-y_validate['value_pred_median'] = 376866.00
 
 
 
@@ -356,5 +372,5 @@ def GLM(power, alpha):
     return print("RMSE for GLM using TweedieRegressor\nTraining/In-Sample: ", round(rmse_train), 
       "\nValidation/Out-of-Sample: ", round(rmse_validate))
 
-
+'''
     
