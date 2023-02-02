@@ -293,13 +293,7 @@ def get_dummies(df, dumb_columns):
     #Creates dummy columns based on list 'dumb_columns' and drops dummy source columns
     """
     #Pandas dummies function
-    dummy_df = pd.get_dummies(df[dumb_columns])
-    
-    #Adds dummy columns on the origional DataFrame
-    df = pd.concat([df, dummy_df], axis=1)
-    
-    #Drops origional columns from the DataFrame
-    df.drop(columns=dumb_columns, inplace = True) 
+    df = pd.get_dummies(df, columns=dumb_columns)
     
     return df
 
@@ -767,9 +761,9 @@ def find_regression_baseline(y_train):
     
     
     if min(rmse_train_mean, rmse_train_median) == rmse_train_median:
-        print(f'Using RMSE Median training baseline: {round(rmse_train_median,0):,.0f}')
+        print(f'Using RMSE Median training baseline: {round(rmse_train_median,4):,.4f}')
     elif min(rmse_train_mean, rmse_train_median) == rmse_train_mean:
-        print(f'Using RMSE Mean training baseline: {round(rmse_train_mean,0):,.0f}')
+        print(f'Using RMSE Mean training baseline: {round(rmse_train_mean,4):,.4f}')
     
     return min(rmse_train_mean, rmse_train_median)
 
