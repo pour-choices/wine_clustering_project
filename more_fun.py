@@ -26,7 +26,7 @@ import prepare_regression as pr
 
 #replaces space with _ in column names
 def rename_col(df):
-    sdf = df.rename(columns= {
+    df = df.rename(columns= {
                     'fixed acidity':'fixed_acidity',
                     'volatile acidity':'volatile_acidity',
                     'citric acid':'citric_acid',
