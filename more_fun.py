@@ -1,13 +1,15 @@
 '''
 This module ported from zillow regression project.  Some functions won't apply directly but can be modified.
 Contains functions for plotting various charts for quick analysis and functions for performing stats tests.
+Would need to import more modules for this to run  but add to .gitignore so it doesn't crowd the
+project repo.
 '''
 
 import seaborn as sns
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import wrangle as w
+#import wrangle as w
 from scipy.stats import pearsonr
 from scipy.stats import spearmanr
 from scipy import stats
@@ -232,7 +234,7 @@ def explained_variance(y_true, y_pred):
 
 
 
-train, validate, test = w.wrangle_zillow()
+#train, validate, test = w.wrangle_zillow()
 
 
 def county_scatter():
