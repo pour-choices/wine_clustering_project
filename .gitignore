@@ -6,3 +6,9 @@ env.py
 .ipynb_checkpoints/
 __pycache__
 *.xlsx
+
+#adding these to gitignore so the more_fun module can run but didn't 
+#want to crowd the project repo
+
+prepare_regression.py
+wrangle.py
