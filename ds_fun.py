@@ -703,32 +703,13 @@ def encode_and_dummies(df, target_column = None ,random_seed=1969):
         elif (len(object_df[col].value_counts()) < 6 ):
             dumb_columns.append(object_df[col].name)
             
-    #Creates dummy columns based on list 'dumb_columns' and drops dummy source columns
-    dummy_df = pd.get_dummies(object_df[dumb_columns])
-    df = pd.concat([df, dummy_df], axis=1)
-    df.drop(columns=dumb_columns, inplace = True)    
+    #Creates dummy columns
+    df = pd.get_dummies(df, columns = dumb_columns)  
 
     #This splits the dataframe into a training, validate and test set.
+    train, validate, test = train_validate(df, stratify_col = target_column)
     
-    #This is logic to set the stratify argument:
-    stratify_arg = ''
-    if target_column != None:
-        stratify_arg = df[target_column]
-    else:
-        stratify_arg = None
     
-    #This splits the DataFrame into 'train' and 'test':
-    train, test = train_test_split(df, train_size=.7, stratify=stratify_arg,
-                                   random_state = random_seed)
-    
-    #The length of the stratify column changed and needs to be adjusted:
-    if target_column != None:
-        stratify_arg = train[target_column]
-        
-    #This splits the larger 'train' DataFrame into a smaller 'train' and 'validate' DataFrames:
-    train, validate = train_test_split(train, test_size=.4,
-                                       stratify=stratify_arg,
-                                       random_state = random_seed)
     return train, validate, test
 
 
