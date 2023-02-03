@@ -27,6 +27,51 @@ def make_dummies(train, val, test, dumb_cols):
     test = pd.get_dummies(test, columns=dumb_cols)
     return train, val, test
 
+def scale_cont_columns(train, val, test, cont_columns, scaler_model = 1):
+    """
+    This takes in the train, validate and test DataFrames, scales the cont_columns using the
+    selected scaler and returns the DataFrames.
+    *** Inputs ***
+    train: DataFrame
+    validate: DataFrame
+    test: DataFrame
+    scaler_model (1 = MinMaxScaler, 2 = StandardScaler, else = RobustScaler)
+    - default = MinMaxScaler
+    cont_columns: List of columns to scale in DataFrames
+    *** Outputs ***
+    train: DataFrame with cont_columns scaled.
+    val: DataFrame with cont_columns scaled.
+    test: DataFrame with cont_columns scaled.
+    """
+    #Create the scaler
+    if scaler_model == 1:
+        scaler = MinMaxScaler()
+    elif scaler_model == 2:
+        scaler = StandardScaler()
+    else:
+        scaler = RobustScaler()
+    
+    #Make a copy
+    train_scaled = train.copy()
+    val_scaled = val.copy()
+    test_scaled = test.copy()
+
+    
+    #Fit the scaler
+    scaler = scaler.fit(train[cont_columns])
+    
+    #Build the new DataFrames
+    train_scaled[cont_columns] = pd.DataFrame(scaler.transform(train[cont_columns]),
+                                                  columns=train[cont_columns].columns.values).set_index([train.index.values])
+
+    val_scaled[cont_columns] = pd.DataFrame(scaler.transform(val[cont_columns]),
+                                                  columns=val[cont_columns].columns.values).set_index([val.index.values])
+
+    test_scaled[cont_columns] = pd.DataFrame(scaler.transform(test[cont_columns]),
+                                                 columns=test[cont_columns].columns.values).set_index([test.index.values])
+    #Sending them back
+    return train_scaled, val_scaled, test_scaled
+
 
 def train_val_test(train, val, test, target_col):
     """
@@ -239,3 +284,73 @@ def find_model_scores(X_train, y_train, X_val, y_val, baseline):
     fig.tight_layout()
     #plt.savefig('best_model_all_features.png')
     plt.show()
+    
+    
+def final_test(X_train, y_train, X_val, y_val, X_test, y_test, baseline):
+    """
+    This function takes in the target DataFrame, runs the data against the
+    machine learning model selected for the final test and outputs some visuals.
+    """
+    
+    #List to capture scores
+    final_rmse_scores = []
+    
+    """ *** Builds and fits Lasso Lars Model *** """  
+    
+    lm = LinearRegression(normalize=True, positive=True)
+    lm.fit(X_train, y_train)
+    
+    #Train data
+    lm = pd.DataFrame({'actual':y_train})
+    lm['pred_lm'] = lm.predict(X_train)
+    
+    #Validate data
+    lm_val_preds = pd.DataFrame({'actual':y_val})
+    lm_val_preds['lm_val_preds'] = lm.predict(X_val)
+    
+    #Test data
+    lm_test_preds = pd.DataFrame({'actual':y_test})
+    lm_test_preds['lm_test_preds'] = lm.predict(X_test)
+    
+    #Finds score on Train and Validate data
+    rmse_train = mean_squared_error(lm_preds['actual'],
+                                    lm_preds['pred_lm'],
+                                    squared=False)
+    rmse_val = mean_squared_error(lm_val_preds['actual'],
+                                  lm_val_preds['lm_val_preds'],
+                                  squared=False)
+    rmse_test = mean_squared_error(lm_test_preds['actual'],
+                              lm_test_preds['lm_test_preds'],
+                              squared=False)
+    
+    #Adds score to metrics list for comparison
+    final_rmse_scores.append({'Model':'Linear Regression Model (OLS)',
+                              'RMSE on Train': round(rmse_train,0), 
+                              'RMSE on Validate': round(rmse_val,0), 
+                              'RMSE on Test': round(rmse_test,0)})
+    # Turn scores into a DataFrame
+    final_rmse_scores = pd.DataFrame(data = final_rmse_scores)
+    print(final_rmse_scores)
+    
+    #Create visuals to show the results
+    fig, ax = plt.subplots(facecolor="gainsboro")
+
+    plt.figure(figsize=(4,4))
+    ax.set_title('Linear Regression Model (OLS) results')
+    ax.axhspan(0, baseline, facecolor='palegreen', alpha=0.2)
+    ax.axhspan(baseline, ymax=450000, facecolor='red', alpha=0.3)
+    ax.set_ylabel('RMS Error')    
+
+    #x_pos = [0.5, 1, 1.5]
+    width = 0.25
+
+    bar1 = ax.bar(0.5, height=final_rmse_scores['RMSE on Train'],width =width, color=('#4e5e33'), label='Train', edgecolor='dimgray')
+    bar2 = ax.bar(1, height= final_rmse_scores['RMSE on Validate'], width =width, color=('#8bc34b'), label='Validate', edgecolor='dimgray')
+    bar3 = ax.bar(1.5, height=final_rmse_scores['RMSE on Test'], width =width, color=('tomato'), label='Test', edgecolor='dimgray')
+
+    # Need to have baseline input:
+    ax.axhline(baseline, label="Baseline", c='tomato', linestyle=':')
+    ax.set_xticks([0.5, 1.0, 1.5], ['Training', 'Validation', 'Test']) 
+    ax.set_ylim(bottom=200000, top=400000)
+    #Zoom into the important area
+    ax.legend(loc='upper right', framealpha=.9, facecolor="whitesmoke", edgecolor='darkolivegreen')
