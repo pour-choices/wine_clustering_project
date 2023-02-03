@@ -8,10 +8,9 @@ import os
 
 #Tools to build machine learning models and reports
 from sklearn.model_selection import train_test_split
-import sklearn.preprocessing
 from sklearn.metrics import mean_squared_error
 from sklearn.cluster import KMeans
-from sklearn.preprocessing import PolynomialFeatures
+from sklearn.preprocessing import PolynomialFeatures, MinMaxScaler, StandardScaler, RobustScaler
 from sklearn.linear_model import LinearRegression, LassoLars, TweedieRegressor
 
 #Removes warnings and imporves asthenics
