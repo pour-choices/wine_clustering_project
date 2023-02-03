@@ -324,9 +324,9 @@ def final_test(X_train, y_train, X_val, y_val, X_test, y_test, baseline):
     
     #Adds score to metrics list for comparison
     final_rmse_scores.append({'Model':'Linear Regression Model (OLS)',
-                              'RMSE on Train': round(rmse_train,0), 
-                              'RMSE on Validate': round(rmse_val,0), 
-                              'RMSE on Test': round(rmse_test,0)})
+                              'RMSE on Train': round(rmse_train,4), 
+                              'RMSE on Validate': round(rmse_val,4), 
+                              'RMSE on Test': round(rmse_test,4)})
     # Turn scores into a DataFrame
     final_rmse_scores = pd.DataFrame(data = final_rmse_scores)
     print(final_rmse_scores)
@@ -350,6 +350,6 @@ def final_test(X_train, y_train, X_val, y_val, X_test, y_test, baseline):
     # Need to have baseline input:
     ax.axhline(baseline, label="Baseline", c='tomato', linestyle=':')
     ax.set_xticks([0.5, 1.0, 1.5], ['Training', 'Validation', 'Test']) 
-    ax.set_ylim(bottom=.5, top=1.5)
+    ax.set_ylim(bottom=.5, top=1)
     #Zoom into the important area
     ax.legend(loc='upper right', framealpha=.9, facecolor="whitesmoke", edgecolor='darkolivegreen')
