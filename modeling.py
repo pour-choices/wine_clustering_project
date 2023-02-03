@@ -291,12 +291,21 @@ def final_test(X_train, y_train, X_val, y_val, X_test, y_test, baseline):
     machine learning model selected for the final test and outputs some visuals.
     """
     
+    pf = PolynomialFeatures(degree=1)
+
+    # fit and transform X_train_scaled
+    X_train_degree2 = pf.fit_transform(X_train)
+
+    # transform X_validate_scaled & X_test_scaled
+    X_validate_degree2 = pf.transform(X_val)
+    #X_test_degree2 = pf.transform(X_test)
+
     #List to capture scores
     final_rmse_scores = []
     
-    """ *** Builds and fits Linear Regression Model (OLS) *** """  
+    """ *** Builds and fits Polynomial Regression Model *** """  
     
-    lm = LinearRegression(normalize=True, positive=True)
+    lm = LinearRegression(normalize=True)
     lm.fit(X_train, y_train)
     
     #Train data
@@ -323,7 +332,7 @@ def final_test(X_train, y_train, X_val, y_val, X_test, y_test, baseline):
                               squared=False)
     
     #Adds score to metrics list for comparison
-    final_rmse_scores.append({'Model':'Linear Regression Model (OLS)',
+    final_rmse_scores.append({'Model':'Polynomial Regression Model',
                               'RMSE on Train': round(rmse_train,4), 
                               'RMSE on Validate': round(rmse_val,4), 
                               'RMSE on Test': round(rmse_test,4)})
@@ -335,7 +344,7 @@ def final_test(X_train, y_train, X_val, y_val, X_test, y_test, baseline):
     fig, ax = plt.subplots(facecolor="gainsboro")
 
     plt.figure(figsize=(4,4))
-    ax.set_title('Linear Regression Model (OLS) results')
+    ax.set_title('Polynomial Regression Model results')
     ax.axhspan(0, baseline, facecolor='palegreen', alpha=0.2)
     ax.axhspan(baseline, ymax=450000, facecolor='red', alpha=0.3)
     ax.set_ylabel('RMS Error')    
