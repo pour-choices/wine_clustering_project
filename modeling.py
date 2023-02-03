@@ -295,7 +295,7 @@ def final_test(X_train, y_train, X_val, y_val, X_test, y_test, baseline):
     #List to capture scores
     final_rmse_scores = []
     
-    """ *** Builds and fits Lasso Lars Model *** """  
+    """ *** Builds and fits Linear Regression Model (OLS) *** """  
     
     lm = LinearRegression(normalize=True, positive=True)
     lm.fit(X_train, y_train)
