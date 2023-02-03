@@ -300,8 +300,8 @@ def final_test(X_train, y_train, X_val, y_val, X_test, y_test, baseline):
     lm.fit(X_train, y_train)
     
     #Train data
-    lm = pd.DataFrame({'actual':y_train})
-    lm['pred_lm'] = lm.predict(X_train)
+    lm_preds = pd.DataFrame({'actual':y_train})
+    lm_preds['pred_lm'] = lm.predict(X_train)
     
     #Validate data
     lm_val_preds = pd.DataFrame({'actual':y_val})
@@ -350,6 +350,6 @@ def final_test(X_train, y_train, X_val, y_val, X_test, y_test, baseline):
     # Need to have baseline input:
     ax.axhline(baseline, label="Baseline", c='tomato', linestyle=':')
     ax.set_xticks([0.5, 1.0, 1.5], ['Training', 'Validation', 'Test']) 
-    ax.set_ylim(bottom=200000, top=400000)
+    ax.set_ylim(bottom=.5, top=1.5)
     #Zoom into the important area
     ax.legend(loc='upper right', framealpha=.9, facecolor="whitesmoke", edgecolor='darkolivegreen')
