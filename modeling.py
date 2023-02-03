@@ -27,6 +27,51 @@ def make_dummies(train, val, test, dumb_cols):
     test = pd.get_dummies(test, columns=dumb_cols)
     return train, val, test
 
+def scale_cont_columns(train, val, test, cont_columns, scaler_model = 1):
+    """
+    This takes in the train, validate and test DataFrames, scales the cont_columns using the
+    selected scaler and returns the DataFrames.
+    *** Inputs ***
+    train: DataFrame
+    validate: DataFrame
+    test: DataFrame
+    scaler_model (1 = MinMaxScaler, 2 = StandardScaler, else = RobustScaler)
+    - default = MinMaxScaler
+    cont_columns: List of columns to scale in DataFrames
+    *** Outputs ***
+    train: DataFrame with cont_columns scaled.
+    val: DataFrame with cont_columns scaled.
+    test: DataFrame with cont_columns scaled.
+    """
+    #Create the scaler
+    if scaler_model == 1:
+        scaler = MinMaxScaler()
+    elif scaler_model == 2:
+        scaler = StandardScaler()
+    else:
+        scaler = RobustScaler()
+    
+    #Make a copy
+    train_scaled = train.copy()
+    val_scaled = val.copy()
+    test_scaled = test.copy()
+
+    
+    #Fit the scaler
+    scaler = scaler.fit(train[cont_columns])
+    
+    #Build the new DataFrames
+    train_scaled[cont_columns] = pd.DataFrame(scaler.transform(train[cont_columns]),
+                                                  columns=train[cont_columns].columns.values).set_index([train.index.values])
+
+    val_scaled[cont_columns] = pd.DataFrame(scaler.transform(val[cont_columns]),
+                                                  columns=val[cont_columns].columns.values).set_index([val.index.values])
+
+    test_scaled[cont_columns] = pd.DataFrame(scaler.transform(test[cont_columns]),
+                                                 columns=test[cont_columns].columns.values).set_index([test.index.values])
+    #Sending them back
+    return train_scaled, val_scaled, test_scaled
+
 
 def train_val_test(train, val, test, target_col):
     """
